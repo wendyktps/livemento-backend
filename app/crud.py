@@ -68,15 +68,6 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 
-def mark_show_as_visited(db: Session, user_id: int, show_id: int, visited: bool):
-    user_show = models.UserShow(
-        user_id=user_id, show_id=show_id, visited=visited)
-    db.add(user_show)
-    db.commit()
-    db.refresh(user_show)
-    return user_show
-
-
 def get_all_artists(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Artist).offset(skip).limit(limit).all()
 
@@ -95,3 +86,31 @@ def create_artist(db: Session, artist: schemas.ArtistCreate):
     db.commit()
     db.refresh(db_artist)
     return db_artist
+
+
+def mark_show_as_going(db: Session, user_id: int, show_id: int):
+    user_show = db.query(models.UserShow).filter_by(user_id=user_id, show_id=show_id).first()
+    if user_show:
+        user_show.going = True
+        db.commit()
+        db.refresh(user_show)
+    else:
+        user_show = models.UserShow(user_id=user_id, show_id=show_id, going=True)
+        db.add(user_show)
+        db.commit()
+        db.refresh(user_show)
+    return user_show
+
+def mark_show_as_attended(db: Session, user_id: int, show_id: int):
+    user_show = db.query(models.UserShow).filter_by(user_id=user_id, show_id=show_id).first()
+    if user_show:
+        user_show.attended = True
+        user_show.going = True
+        db.commit()
+        db.refresh(user_show)
+    else:
+        user_show = models.UserShow(user_id=user_id, show_id=show_id, going=True, attended=True)
+        db.add(user_show)
+        db.commit()
+        db.refresh(user_show)
+    return user_show
