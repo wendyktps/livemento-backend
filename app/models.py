@@ -13,11 +13,13 @@ class Show(Base):
     genre = Column(String)
     place = Column(String)
     date = Column(DateTime)
+    artist_id = Column(Integer, ForeignKey("artists.id"))
     opening_artist_id = Column(Integer, ForeignKey("artists.id"), nullable=True, default=None)
     setlist = Column(JSON)
 
     users = relationship("UserShow", back_populates="show")
     reviews = relationship("Review", back_populates="show")
+    artist = relationship("Artist", foreign_keys=[artist_id])
     opening_artist = relationship("Artist", foreign_keys=[opening_artist_id])
 
 class Artist(Base):
