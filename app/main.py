@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import shows, reviews, auth
+from app.routers import shows, reviews, auth, usershow
 from app.database import engine
 from app import models
 
@@ -10,3 +10,4 @@ app = FastAPI()
 app.include_router(shows.router, prefix="/shows", tags=["shows"])
 app.include_router(reviews.router, prefix="/reviews", tags=["reviews"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(usershow.router, prefix="/usershow", tags=["usershow"])
