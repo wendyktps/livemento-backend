@@ -3,18 +3,20 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Text
 from app.database import Base
 
+
 class Show(Base):
     __tablename__ = "shows"
 
     id = Column(Integer, primary_key=True, index=True)
-    image = Column(String) 
+    image = Column(String)
     title = Column(String, index=True)
     description = Column(Text)
     genre = Column(String)
     place = Column(String)
     date = Column(DateTime)
     artist_id = Column(Integer, ForeignKey("artists.id"))
-    opening_artist_id = Column(Integer, ForeignKey("artists.id"), nullable=True, default=None)
+    opening_artist_id = Column(Integer, ForeignKey(
+        "artists.id"), nullable=True, default=None)
     setlist = Column(JSON)
 
     users = relationship("UserShow", back_populates="show")
@@ -22,16 +24,17 @@ class Show(Base):
     artist = relationship("Artist", foreign_keys=[artist_id])
     opening_artist = relationship("Artist", foreign_keys=[opening_artist_id])
 
+
 class Artist(Base):
     __tablename__ = "artists"
 
     id = Column(Integer, primary_key=True, index=True)
-    image = Column(String) 
+    image = Column(String)
     name = Column(String, index=True)
     description = Column(Text)
     genre = Column(String)
     spotify = Column(String)
-    apple_music = Column(String) 
+    apple_music = Column(String)
 
     followers = relationship("ArtistFollowers", back_populates="artist")
 
@@ -40,7 +43,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    image = Column(String) 
+    image = Column(String)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     password_hash = Column(String)
@@ -69,8 +72,8 @@ class UserShow(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     show_id = Column(Integer, ForeignKey("shows.id"))
-    going = Column(Boolean, default=False) 
-    attended = Column(Boolean, default=False)  
+    going = Column(Boolean, default=False)
+    attended = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="shows")
     show = relationship("Show", back_populates="users")

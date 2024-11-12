@@ -2,14 +2,18 @@ from sqlalchemy.orm import Session
 from app import models, schemas
 from passlib.hash import bcrypt
 
+
 def get_shows(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Show).offset(skip).limit(limit).all()
+
 
 def get_shows_by_name(db: Session, name: str):
     return db.query(models.Show).filter(models.Show.title.ilike(f"%{name}%")).all()
 
+
 def get_show(db: Session, show_id: int):
     return db.query(models.Show).filter(models.Show.id == show_id).first()
+
 
 def create_show(db: Session, show: schemas.ShowBase):
     db_show = models.Show(**show.dict())
@@ -17,6 +21,7 @@ def create_show(db: Session, show: schemas.ShowBase):
     db.commit()
     db.refresh(db_show)
     return db_show
+
 
 def get_reviews(db: Session, show_id: int, skip: int = 0, limit: int = 10):
     return db.query(models.Review).filter(models.Review.show_id == show_id).offset(skip).limit(limit).all()
@@ -33,19 +38,24 @@ def create_review(db: Session, review: schemas.ReviewBase):
     db.refresh(db_review)
     return db_review
 
+
 def get_users(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.User).offset(skip).limit(limit).all()
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = bcrypt.hash(user.password)
-    db_user = models.User(email=user.email, name=user.name, password_hash=hashed_password)
+    db_user = models.User(email=user.email, name=user.name,
+                          password_hash=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 def authenticate_user(db: Session, email: str, password: str):
     user = db.query(models.User).filter(models.User.email == email).first()
@@ -53,11 +63,14 @@ def authenticate_user(db: Session, email: str, password: str):
         return user
     return None
 
+
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
+
 def mark_show_as_visited(db: Session, user_id: int, show_id: int, visited: bool):
-    user_show = models.UserShow(user_id=user_id, show_id=show_id, visited=visited)
+    user_show = models.UserShow(
+        user_id=user_id, show_id=show_id, visited=visited)
     db.add(user_show)
     db.commit()
     db.refresh(user_show)
@@ -67,11 +80,14 @@ def mark_show_as_visited(db: Session, user_id: int, show_id: int, visited: bool)
 def get_all_artists(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Artist).offset(skip).limit(limit).all()
 
+
 def get_artist(db: Session, artist_id: int):
     return db.query(models.Artist).filter(models.Show.id == artist_id).first()
 
+
 def get_artists_by_name(db: Session, name: str):
     return db.query(models.Artist).filter(models.Artist.name.ilike(f"%{name}%")).all()
+
 
 def create_artist(db: Session, artist: schemas.ArtistCreate):
     db_artist = models.Artist(**artist.dict())

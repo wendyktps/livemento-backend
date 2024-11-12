@@ -15,6 +15,7 @@ def get_reviews(show_id: int, skip: int = 0, limit: int = 10, db: Session = Depe
     reviews = crud.get_reviews(db=db, show_id=show_id, skip=skip, limit=limit)
     return reviews
 
+
 @router.get("/users/{user_id}/reviews/", response_model=List[schemas.Review])
 def get_reviews_by_user(user_id: int, db: Session = Depends(get_db)):
     reviews = crud.get_reviews_by_user(db=db, user_id=user_id)
