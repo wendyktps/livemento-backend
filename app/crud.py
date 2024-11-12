@@ -62,3 +62,20 @@ def mark_show_as_visited(db: Session, user_id: int, show_id: int, visited: bool)
     db.commit()
     db.refresh(user_show)
     return user_show
+
+
+def get_all_artists(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Artist).offset(skip).limit(limit).all()
+
+def get_artist(db: Session, artist_id: int):
+    return db.query(models.Artist).filter(models.Show.id == artist_id).first()
+
+def get_artists_by_name(db: Session, name: str):
+    return db.query(models.Artist).filter(models.Artist.name.ilike(f"%{name}%")).all()
+
+def create_artist(db: Session, artist: schemas.ArtistCreate):
+    db_artist = models.Artist(**artist.dict())
+    db.add(db_artist)
+    db.commit()
+    db.refresh(db_artist)
+    return db_artist
