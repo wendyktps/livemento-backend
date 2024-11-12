@@ -21,7 +21,7 @@ def get_artists_by_name(name: str, db: Session = Depends(get_db)):
     return artists
 
 
-@router.get("/artists/{artist_id}/", response_model=schemas.Show, name="get_artist")
+@router.get("/artists/{artist_id}/", response_model=schemas.Artist, name="get_artist")
 def get_artist(artist_id: int, db: Session = Depends(get_db)):
     show = crud.get_artist(db=db, show_id=artist_id)
     if show is None:
