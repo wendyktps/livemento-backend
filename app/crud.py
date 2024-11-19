@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app import models, schemas
 from passlib.hash import bcrypt
-
+from fastapi import HTTPException, status
 
 def get_shows(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Show).offset(skip).limit(limit).all()
@@ -86,7 +86,7 @@ def get_artists_by_name(db: Session, name: str):
     return db.query(models.Artist).filter(models.Artist.name.ilike(f"%{name}%")).all()
 
 
-def create_artist(db: Session, artist: schemas.ArtistCreate):
+def create_artist(db: Session, artist: schemas.ArtistBase):
     db_artist = models.Artist(**artist.dict())
     db.add(db_artist)
     db.commit()
